@@ -20,6 +20,43 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <id>install-mcutils</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/libs/McUtils-2.0.jar</file>
+                            <groupId>com.shojabon</groupId>
+                            <artifactId>McUtils</artifactId>
+                            <version>2.0</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-scommandrouter</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/libs/SCommandRouter-1.0-SNAPSHOT.jar</file>
+                            <groupId>com.shojabon</groupId>
+                            <artifactId>SCommandRouter</artifactId>
+                            <version>1.0-SNAPSHOT</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
@@ -75,6 +112,17 @@
             <artifactId>json</artifactId>
             <version>20231013</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.shojabon</groupId>
+            <artifactId>McUtils</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.shojabon</groupId>
+            <artifactId>SCommandRouter</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
