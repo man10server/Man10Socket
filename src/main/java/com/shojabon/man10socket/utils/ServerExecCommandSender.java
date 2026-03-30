@@ -1,5 +1,6 @@
 package com.shojabon.man10socket.utils;
 
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,6 +15,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.SocketAddress;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -28,9 +30,21 @@ public class ServerExecCommandSender implements RemoteConsoleCommandSender {
     public final StringJoiner messageBuffer = new StringJoiner("\n");
 
     public CompletableFuture<String> executeCommand(String command, TimeUnit messagingUnit) {
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("Man10Socket");
+        if (plugin == null) {
+            CompletableFuture<String> future = new CompletableFuture<>();
+            future.completeExceptionally(new IllegalStateException("Man10Socket plugin is not enabled"));
+            return future;
+        }
+
         Future<Boolean> commandFuture = Bukkit.getScheduler().callSyncMethod(
-                Bukkit.getPluginManager().getPlugin("Man10Socket"),
-                () -> Bukkit.dispatchCommand(this, command)
+                plugin,
+                () -> {
+                    CommandSender commandSender = Bukkit.getServer().createCommandSender(component ->
+                            messageBuffer.add(PlainTextComponentSerializer.plainText().serialize(component))
+                    );
+                    return Bukkit.dispatchCommand(commandSender, command);
+                }
         );
 
         CompletableFuture<String> future = new CompletableFuture<>();
@@ -151,6 +165,11 @@ public class ServerExecCommandSender implements RemoteConsoleCommandSender {
         CONSOLE_COMMAND_SENDER.sendRawMessage(uuid, raw);
     }
 
+    @Override
+    public @Nullable SocketAddress getAddress() {
+        return null;
+    }
+
     @SuppressWarnings("ConstantConditions")
     public CommandSender.Spigot spigot() {
         try {
@@ -163,7 +182,7 @@ public class ServerExecCommandSender implements RemoteConsoleCommandSender {
 
     @Override
     public @NotNull Component name() {
-        return null;
+        return CONSOLE_COMMAND_SENDER.name();
     }
 
 }
