@@ -22,6 +22,12 @@ public class VanillaCommandFunction extends SocketFunction {
 
             client.sendReply("success", response, message.getString("replyId"));
         });
+        future.exceptionally(throwable -> {
+            if (message.has("replyId")) {
+                client.sendReply("error_internal", throwable.getMessage(), message.getString("replyId"));
+            }
+            return null;
+        });
 
     }
 }
